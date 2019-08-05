@@ -18,7 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 public class Index {
     /**
-    *功能描述：创建索引库
+    *功能描述：创建索引库，索引包含一系列文档，文档包含一系列field，field是一系列term的名字，term为分词后的语汇单元
     *@param
     *@return:
     *@author:
@@ -47,8 +47,12 @@ public class Index {
             TextField textField =new TextField("fileName", name, Field.Store.YES);
             //获取文件的字节大小
             long size = FileUtils.sizeOf(file);
-            //创建field域
+            //创建field域，只构建索引不分词不存储,用于精确查询和范围查询
             LongPoint point =new LongPoint("fileSize",size);
+            //存储该field
+            StoredField storedField1=new StoredField("fileSize", size);
+            //对该field进行排序，需要使用docvalues，用于排序查询
+            NumericDocValuesField numericDocValuesField=new NumericDocValuesField("fileSize", size);
             //获得文件的路径
             String path = file.getPath();
             //创建field域
@@ -62,6 +66,8 @@ public class Index {
             document.add(textField1);
             document.add(field);
             document.add(point);
+            document.add(storedField1);
+            document.add(numericDocValuesField);
             //将文档对象写入到索引库
             writer.addDocument(document);
         }
@@ -78,7 +84,7 @@ public class Index {
         Directory dictory = FSDirectory.open(Paths.get("F:\\luceneindexs"));
         //    创建标准分词器对象
 //        Analyzer analyzer = new StandardAnalyzer();
-        Analyzer analyzer =new SmartChineseAnalyzer();
+        Analyzer analyzer =new StandardAnalyzer();
         // 创建indexwriter的config对象并指定分词器
         IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
         // 创建index writer对象
