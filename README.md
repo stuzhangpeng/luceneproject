@@ -1,2 +1,23 @@
 # luceneproject
 主要演示lucene 索引库的创建以及索引维护和索引的查询
+全文检索：通过抽取非结构化数据的部分信息重新组织成一定结构的索引，然后通过反向索引的方法查询指定文档的方法，主要用于大数据的非结构化数据查询
+全文检索的大致流程：
+获取原始文档-创建文档对象-添加field-文档分析-把索引信息及文档对象写入索引库
+全文检索主要用于非结构化数据的查询
+非结构化数据和结构化数据的区别
+结构化数据具有固定的格式比如行和列以及预计的长度比如数据库：结构化数据查询一般用关系型数据库查询
+非结构化数据：数据格式不固定，搜索数据的方内容不固定
+全文检索的一些相关概念：
+索引：包含一系列的文档
+文档：包含一系列的field
+field：一系列term的名称。文档可以拥有不同的field也可以拥有相同的的field
+term：文档经过分词器分词后的基本单元包含field名和value
+field的分类：
+StringField：不分词 索引 存储|不存储
+int|double|float|long point 只索引
+TextField：分词 索引 存储|不存储
+StoredField  只存储
+一系列的DocValuesfield: 比如NumericValuesField主要用来进行排序的long类型数据
+field主要包含fieldname和value以及fieldtype三部分，其中value可以是string Reader TokenStream，fieldtype中的docvaluetypes主要描述如何进行索引存储
+索引库的文档使用正向索引存储，拥有文档id及相关field的对应信息，索引信息使用反向索引的方式存储包含term对应的文档id 出现的频数 以及索引的位置等等
+索引查询的大致流程：通过term加query条件获得topDocsColleor然后获得对应文档id，然后通过IndexSearcher对象通过id查找对应的文档然后获得文档中的field内容
